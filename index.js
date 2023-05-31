@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = process.env.PORT||5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const port = process.env.PORT || 5000;
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 
 //middleware
@@ -30,9 +30,34 @@ async function run() {
 
     const toysCollection = client.db('IntellectoToys').collection('listOfToys');
 
-    app.get('/toys',async(req,res)=>{
+    app.get('/toys', async (req, res) => {
       const cursor = toysCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    app.get('/toys/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toysCollection.findOne(query);
+
+      res.send(result);
+    })
+
+
+    //add a toy
+    app.post('/addtoy',async(req,res)=>{
+      const addtoy= req.body;
+      console.log(addtoy);
+
+
+      const result = await toysCollection.insertOne(addtoy);
+      res.send(result);
+    })
+
+    //My toys
+    app.get('/http://localhost:5000/toys', async(req,res)=>{
+      const result = await toysCollection.find().toArray();
       res.send(result);
     })
 
@@ -56,10 +81,10 @@ run().catch(console.dir);
 
 
 
-app.get('/',(req,res)=>{
-    res.send("Server is running");
+app.get('/', (req, res) => {
+  res.send("Server is running");
 })
 
-app.listen(port, ()=>{
-    console.log(`Car Doctor Server is running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Car Doctor Server is running on port ${port}`);
 })
