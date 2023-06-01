@@ -46,8 +46,8 @@ async function run() {
 
 
     //add a toy
-    app.post('/addtoy',async(req,res)=>{
-      const addtoy= req.body;
+    app.post('/addtoy', async (req, res) => {
+      const addtoy = req.body;
       console.log(addtoy);
 
 
@@ -56,10 +56,16 @@ async function run() {
     })
 
     //My toys
-    app.get('/http://localhost:5000/toys', async(req,res)=>{
-      const result = await toysCollection.find().toArray();
+    app.get('/myToys', async (req, res) => {
+      console.log(req.query.seller_email);
+      let query = {};
+      if (req.query?.seller_email) {
+        query = { seller_email: req.query.seller_email }
+      }
+      const result = await toysCollection.find(query).toArray();
       res.send(result);
     })
+
 
 
 
