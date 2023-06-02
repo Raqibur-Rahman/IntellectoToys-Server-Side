@@ -32,21 +32,22 @@ async function run() {
 
     const toysCollection = client.db('IntellectoToys').collection('listOfToys');
 
+    // Get all toys
     app.get('/toys', async (req, res) => {
       const cursor = toysCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
+    // Get a specific toy by ID
     app.get('/toys/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await toysCollection.findOne(query);
-
       res.send(result);
     });
 
-    // Add a toy
+    // Add a new toy
     app.post('/addtoy', async (req, res) => {
       const addtoy = req.body;
       console.log(addtoy);
@@ -55,7 +56,7 @@ async function run() {
       res.send(result);
     });
 
-    // My toys
+    // Get toys by seller email
     app.get('/myToys', async (req, res) => {
       console.log(req.query.seller_email);
       let query = {};
@@ -66,7 +67,7 @@ async function run() {
       res.send(result);
     });
 
-    // Delete toy
+    // Delete a toy by ID
     app.delete('/toys/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -74,7 +75,7 @@ async function run() {
       res.send(result);
     });
 
-    // Update toy
+    // Update a toy by ID
     app.put('/toys/:id', async (req, res) => {
       const id = req.params.id;
       const updatedToy = req.body;
@@ -95,10 +96,12 @@ async function run() {
 
 run().catch(console.dir);
 
+// Root endpoint
 app.get('/', (req, res) => {
   res.send("Server is running");
 });
 
+// Start the server
 app.listen(port, () => {
-  console.log(`Car Doctor Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
